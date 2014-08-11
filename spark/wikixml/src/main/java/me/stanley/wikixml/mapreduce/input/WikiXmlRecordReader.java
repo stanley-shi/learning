@@ -1,15 +1,6 @@
 package me.stanley.wikixml.mapreduce.input;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLEventWriter;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.events.StartElement;
-import javax.xml.stream.events.XMLEvent;
 
 import me.stanley.wikixml.util.StringUtil;
 
@@ -44,7 +35,6 @@ public class WikiXmlRecordReader extends RecordReader<Text, Text> {
   Text curKey;
   Text curValue;
 
-  
   @Override
   public void close() throws IOException {
     fileIn.close();
@@ -72,7 +62,9 @@ public class WikiXmlRecordReader extends RecordReader<Text, Text> {
   @Override
   public void initialize(InputSplit genericSplit, TaskAttemptContext context)
       throws IOException, InterruptedException {
+
     FileSplit split = (FileSplit) genericSplit;
+    LOG.info("Initializing with split: " + split.getPath());
     Configuration job = context.getConfiguration();
     start = split.getStart();
     end = start + split.getLength();
@@ -127,8 +119,6 @@ public class WikiXmlRecordReader extends RecordReader<Text, Text> {
 
     // NOTE: in the last split, there're some extra texts that are outside of
     // all pages, we need to skip them
-
-    
 
     return false;
   }

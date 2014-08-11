@@ -1,4 +1,4 @@
-<page>
+    <page>
         <title>AccessibleComputing</title>
         <ns>0</ns>
         <id>10</id>

@@ -12,7 +12,15 @@ public class StringUtil {
     }
     int data;
   }
-
+/**
+ * search the specified string from the inputstream;
+ * Note: the specified string will be read from this inputstream, so 
+ * if you need to process the  content with the str, you need to append it back
+ * @param str
+ * @param is
+ * @return
+ * @throws IOException
+ */
   public static long getFirstIndex(String str, InputStream is)
       throws IOException {
     byte[] bstr = str.getBytes();
