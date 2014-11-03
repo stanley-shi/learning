@@ -12,8 +12,7 @@ public class WikiXmlInputFormat extends FileInputFormat<Text, Text>{
   @Override
   public WikiXmlRecordReader createRecordReader(InputSplit arg0,
       TaskAttemptContext arg1) throws IOException, InterruptedException {
-    // TODO Auto-generated method stub
-    return null;
+    return new WikiXmlRecordReader();
   }
 
 }

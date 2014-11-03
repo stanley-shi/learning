@@ -51,4 +51,13 @@ public class StringUtil {
     }
     return -1;
   }
+  
+  public static  String getTitle(String pageStr) {
+    int idx0 = pageStr.indexOf("<title>");
+    int idx1 = pageStr.indexOf("</title>");
+
+    String string = pageStr.substring(idx0 + 7, idx1);
+    return string;
+  }
+  
 }

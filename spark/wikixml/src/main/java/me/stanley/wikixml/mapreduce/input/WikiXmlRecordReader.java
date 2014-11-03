@@ -2,7 +2,13 @@ package me.stanley.wikixml.mapreduce.input;
 
 import java.io.IOException;
 
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+
 import me.stanley.wikixml.util.StringUtil;
+import me.stanley.wikixml.util.XMLWrappedInputStream;
+import me.stanley.wikixml.util.XmlUtils;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,8 +38,11 @@ public class WikiXmlRecordReader extends RecordReader<Text, Text> {
   private FSDataInputStream fileIn;
   boolean noRecordInCurrentSplit = false;
 
+  static XMLInputFactory factory = XMLInputFactory.newInstance();
+
   Text curKey;
   Text curValue;
+  private XMLEventReader xmlEvtReader;
 
   @Override
   public void close() throws IOException {
@@ -103,13 +112,21 @@ public class WikiXmlRecordReader extends RecordReader<Text, Text> {
       fileIn.seek(start);
       curPos = start;
     }
+
+    XMLWrappedInputStream xmlinput = new XMLWrappedInputStream(fileIn);
+    try {
+      xmlEvtReader = factory.createXMLEventReader(xmlinput);
+    } catch (XMLStreamException e) {
+      throw new IOException("Create xml event reader from split file failed!",
+          e);
+    }
+
   }
 
   @Override
   public boolean nextKeyValue() throws IOException, InterruptedException {
     if (noRecordInCurrentSplit)
       return false;
-    // TODO Auto-generated method stub
     if (curKey == null) {
       curKey = new Text();
     }
@@ -119,7 +136,20 @@ public class WikiXmlRecordReader extends RecordReader<Text, Text> {
 
     // NOTE: in the last split, there're some extra texts that are outside of
     // all pages, we need to skip them
-
-    return false;
+    try {
+      if (curPos > end)
+        return false;
+      String pageStr = XmlUtils.getFullElement(xmlEvtReader, "page");
+      curPos += pageStr.length();
+      if (pageStr.length() <= 0)
+        return false;
+      String string = StringUtil.getTitle(pageStr);
+      curKey.set(string);
+      curValue.set(pageStr);
+    } catch (XMLStreamException e) {
+      e.printStackTrace();
+    }
+    return true;
   }
+
 }
