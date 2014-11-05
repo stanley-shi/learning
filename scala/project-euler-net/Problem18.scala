@@ -48,14 +48,19 @@ val input = """
 04 62 98 27 23 09 70 98 73 93 38 53 60 04 23
 """
 
-val nums = input.split("\n").filter(_.length >0).map(_.split(" ").map(_.toInt)).reverse
-val result = (0 to nums.length).map(n => 0).toArray
+val nums_input = input.split("\n").filter(_.length >0).map(_.split(" ").map(_.toInt)).reverse
+val result_tmp = (0 to nums_input.length).map(n => 0).toArray
 
 def getResult(nums: Array[Array[Int]], result: Array[Int]): Array[Int] ={
   if(nums.length==0) result
-else {
-  val newResult = nums.head...result
-  getResult(nums.tail, newResult)
-}
+  else {
+    val res1 = nums.head.zip(result.tail).map(n => n._1+n._2)
+    val res2 = nums.head.zip(result.init).map(n => n._1+n._2)
+    val newResult = res1.zip(res2).map(n => if (n._1>n._2) n._1 else n._2)
+    // println(newResult)
+    getResult(nums.tail, newResult)
+  }
 }
 
+val finalResult = getResult(nums_input, result_tmp)
+println(finalResult(0))
