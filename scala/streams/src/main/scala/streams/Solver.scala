@@ -65,9 +65,12 @@ trait Solver extends GameDef {
    */
   def from(initial: Stream[(Block, List[Move])],
            explored: Set[Block]): Stream[(Block, List[Move])] = {
-    val nextLevel = initial.flatMap {case (block, move) => newNeighborsOnly(neighborsWithHistory(block, move), explored) }
-    val ne = explored++ nextLevel.map {case (block, move)=> block}.toSet
-    nextLevel #::: from(nextLevel, ne)
+    if(initial.isEmpty) Stream()
+    else {
+      val nextLevel = initial.flatMap { case (block, move) => newNeighborsOnly(neighborsWithHistory(block, move), explored) }
+      val ne = explored ++ nextLevel.map { case (block, move) => block }.toSet
+      nextLevel #::: from(nextLevel, ne)
+    }
   }
 
   /**
@@ -89,5 +92,5 @@ trait Solver extends GameDef {
    * the first move that the player should perform from the starting
    * position.
    */
-  lazy val solution: List[Move] = pathsToGoal(1)._2
+  lazy val solution: List[Move] = if ( pathsToGoal.isEmpty ) Nil else pathsToGoal(0)._2
 }

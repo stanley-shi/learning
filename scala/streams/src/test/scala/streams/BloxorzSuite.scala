@@ -40,6 +40,24 @@ class BloxorzSuite extends FunSuite {
     val optsolution = List(Right, Right, Down, Right, Right, Right, Down)
   }
 
+  trait Level2 extends SolutionChecker {
+    val level =
+    """ooo-------
+      |oSoooo----
+      |ooooooooo-
+      |-oo-------
+      |-----ooToo
+      |------ooo-""".stripMargin
+
+  }
+
+  test("test no solution") {
+    new Level2 {
+
+        assert(solution == Nil)
+
+    }
+  }
 
 	test("terrain function level 1") {
     new Level1 {
